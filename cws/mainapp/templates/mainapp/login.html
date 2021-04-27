@@ -1,0 +1,32 @@
+{%extends 'mainapp/base.html'%}
+ 
+{% block content %}
+    <main class="form-signin container main-content">
+        <div class=" login-card card ">
+            <div class="card-body">
+                {% if form.errors %}
+                    <p>Имя или пароль пользователя не верны</p>
+                {% endif %}
+
+                {% if next %}
+                    {% if user.is_authenticated %}
+                        <p>У вас не достаточно прав, попробуйте войти под другим пользователем</p>
+                    {% else %}
+                        <p>Авторизируйтесь чтобы увидеть эту страницу.</p>
+                    {% endif %}
+                {% endif %}
+
+                <form method="post" action="{% url 'login' %}">
+                {% csrf_token %}
+                    <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+                    <label for="inputEmail" class="visually-hidden" name="username">Email address </label>
+                    <input  id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+                    <label for="inputPassword" class="visually-hidden">Password</label>
+                    <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
+                    <input type="submit" value="Войти" class="btn btn-primary">
+                    <input type="hidden" name="next" value="{{ next }}">
+                </form>
+            </div>
+        </div>
+    </main>
+{% endblock %}

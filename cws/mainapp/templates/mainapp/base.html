@@ -1,0 +1,89 @@
+{% load static %}
+<!DOCTYPE HTML>
+
+<html xmlns="http://www.w3.org/1999/html">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script>
+            axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+            axios.defaults.xsrfCookieName = "csrftoken";
+        </script>
+    </head>
+
+    <body>
+        <header>
+            <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+                <div class="container">
+                    <a class="navbar-brand" href="#">LOGO</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div id="navbarCollapse" class="collapse navbar-collapse">
+                        <ul class="navbar-nav me-auto mb-2 mb-md-0" ">
+                            <li class="nav-item">
+                            <a class="nav-link" href="/">На главную</a>
+                            </li>
+                            <li class="nav-item">
+                            <a class="nav-link" href="#">Тесты</a>
+                            </li>
+                        </ul>
+                        <div class="auth">
+                            <form action="/accounts/login/" method="GET">
+                                <button type="submit" class="btn btn-outline-secondary">Войти</button>
+                            </form>
+                        </div>
+                        
+                        </div>
+                        
+                    </div>
+                </div>
+            </nav>
+        </header>    
+    </body>
+        
+            {%block content%}
+            {%endblock content%}
+        
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+    
+    <style>
+           .main-content {
+            margin-top: 55px;
+           }
+           
+           .card-text {
+                max-width: 850px;
+                padding: 20px 0;
+            }
+
+            .mx-width-1100 {
+                max-width: 1100px;
+            }        
+
+            img.img-content-card {
+                display: block;
+                margin: 0 auto;
+                max-width: 100%;
+                height: auto;
+                object-fit: contain;
+                max-height: 100%;
+                width: auto;   
+            }
+
+            #main-banner {
+                background-image: url('/media/banner.png');
+                background-repeat: no-repeat;
+                background-size:cover;
+            }
+
+            .test-card {
+                margin: 30px;
+            }
+    </style>
+</html>

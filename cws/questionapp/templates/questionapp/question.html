@@ -1,0 +1,108 @@
+ {%extends 'mainapp/base.html'%}
+ <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+{%block content%}
+    <main class='main-content'>
+        <div class='container'>
+            <div class='questions'>
+                <h1>Общий тест</h2>
+            </div>
+        </div>
+    </main>
+           
+    </div>
+
+    <script>
+        $(document).ready(
+        function() {
+          $.ajax({
+              url: '/api/question/',
+              type: 'GET',
+              success: (data) => {
+                 $('.questions').append(renderCard(data))
+              }
+          })
+       }
+    );
+
+    function renderCard(data) {
+        let template = `
+           <div class="card w-50 bg-light test-card">
+                <div class="card-header">
+                    ${data.results[0].text}
+                </div>
+            `
+            $.each(data.results[0].answers, function(key, value){
+                template += `<div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="${value.id}" id="ans-input">
+                                <label class="form-check-label" for="flexCheckDefault">${value.text}</label>
+                            </div>
+                        `
+            })
+            template += `<a class="btn btn-primary" id="answer" href="${data.next}" role="button">Next</a>
+                </div>`    
+            return template
+    };
+
+    /*
+    function loadMore() {
+    $('#answer').each((index, el)  => {
+        $(el).click((e) => {
+            e.preventDefault()
+            var values = [];
+            $('[id="ans-input"]:checked').each(function(){
+            values.push($(this).val());
+            });     
+            alert(values.join(', '));
+            
+            let pageUrl = $(el).attr('href')
+            $.ajax({
+                url: pageUrl, 
+                type: 'GET',
+                success: (data) => {
+                    $('.questions').append(renderCard(data))
+                }    
+
+            })
+        })
+    })
+    }
+    $(document).ready(function() {
+        loadMore()
+    })
+
+    $(document).ajaxStop(function() {
+        loadMore()
+    })
+    */
+
+     
+        $(document).on('click', '#answer', function(e) {
+            e.preventDefault()
+            var values = [];
+
+            $('[id="ans-input"]:checked:not(:disabled)').each(function(){
+                 values.push($(this).val()) 
+            })    
+
+            console.log(values)
+            
+            let pageUrl = $(this).attr('href')
+            $.ajax({
+                url: pageUrl, 
+                type: 'GET',
+                success: (data) => {
+                    $(this).addClass('disabled')
+                    $('input').attr('disabled', true); 
+                    $('.questions').append(renderCard(data))
+                    
+
+                }    
+
+            })
+        })
+    
+
+
+    </script>
+{% endblock%}
+
