@@ -1,6 +1,6 @@
 from django.contrib import admin
-from mainapp.models import Card, ContentCard, Topic
-from questionapp.models import Question, Answer
+from mainapp.models import Card, ContentCard, Topic, Comment
+from questionapp.models import Question, Answer, QuestionCard
 
 @admin.register(Card)
 class Card_Admin(admin.ModelAdmin):
@@ -21,5 +21,15 @@ class Question_Admin(admin.ModelAdmin):
 
 @admin.register(Answer)
 class Answer_Admin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Comment)
+class Comment_Admin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(QuestionCard)
+class Question_Card(admin.ModelAdmin):
     pass
 

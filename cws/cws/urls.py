@@ -15,28 +15,34 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, re_path, include
-from mainapp.views import education
 from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib.auth import views as auth_views
 from ckeditor_uploader import urls as ck_urls
 from rest_framework import routers
-    
-from mainapp.views import Home, CardViewSet, EducationListView
-from questionapp.views import QuestionViewSet,  question_page 
-
+import rest_framework.urls
+from mainapp.views import Home, ContentCardViewSet, EducationListView
+from questionapp.views import QuestionViewSet,  question_page, TestListView
+from mainapp.api.views import CommentList, CommentDetail
 
 router =  routers.DefaultRouter()
-router.register('question', QuestionViewSet)
+router.register(r'question/(?P<id>.+)', QuestionViewSet)
+router.register('content_card', ContentCardViewSet)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', Home.as_view(), name="Home"),
     path('api/',include(router.urls)),
+    path('question/', include('questionapp.urls')),
     path('accounts/login/', auth_views.LoginView.as_view(template_name='mainapp/login.html'),name="login"),
     path('ckeditor/', include(ck_urls)),
     path('edu/<int:id>/', EducationListView.as_view(), name="Education"),
-    path('test/', question_page, name='Test'),
+    path('test/', TestListView.as_view(), name='TestList'),
+    path('test/<int:id>/', question_page, name='question_page'),
+    path('api-auth/', include('rest_framework.urls')),
+    path('comments/', CommentList.as_view()),
+    path('comments/<int:pk>/', CommentDetail.as_view()),
  
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
   

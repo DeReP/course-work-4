@@ -1,0 +1,23 @@
+{%extends 'mainapp/base.html'%}
+    
+    {%block content%}
+    <main class="main-content">
+        <div class="album py-5">
+            <div class="container">
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                {% for card in object_list %}    
+                    <div class="col">
+                        <div class="card h-100 bg-light">
+                            <img class="card-img-top" src="{{card.get_preview}}">
+                                <div class="card-body">
+                                    <h4 class="card_title">{{ card.text }}</h4>
+                                    <a href="{{card.get_absolute_url}}" class="btn btn-primary">Пройти тест</a>
+                                </div>
+                        </div>      
+                    </div>        
+                {% endfor %}
+                </div>
+            </div>
+        </div>
+    </main>
+    {%endblock%}

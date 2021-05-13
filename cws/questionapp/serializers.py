@@ -14,6 +14,6 @@ class QuestionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Question
-        fields = ('id', 'text', 'answers')
+        fields = ('id', 'text', 'answers', 'topic')
         depth = 1
 

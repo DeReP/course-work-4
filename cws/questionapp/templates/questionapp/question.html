@@ -4,105 +4,153 @@
     <main class='main-content'>
         <div class='container'>
             <div class='questions'>
-                <h1>Общий тест</h2>
+                <h1 class='text-center'>Тест по теме: {{topic}}</h1>
             </div>
         </div>
     </main>
            
     </div>
+    <style>
+        .correct {
+            border: 2px solid green;
+            border-radius: 7px;
+        }
+        .uncorrect {
+            border: 2px solid red;
+            border-radius: 7px;
+        }
 
+        .miss {
+            border: 2px solid yellow;
+            border-radius: 7px;
+        }
+
+        .questions > * {
+            margin: 20px auto !important;
+        }
+
+        .form-check {
+            margin: 5px;
+            
+        }
+
+       
+    </style>
     <script>
         $(document).ready(
         function() {
-          $.ajax({
-              url: '/api/question/',
-              type: 'GET',
-              success: (data) => {
-                 $('.questions').append(renderCard(data))
-              }
-          })
-       }
-    );
+            axios.get('/api/question/{{topic_id}}/').then(response => {
+                 $('.questions').append(renderCard(response.data))
+              })
+        })
 
     function renderCard(data) {
         let template = `
-           <div class="card w-50 bg-light test-card">
+           <div class="card mx-width-500 bg-light test-card" id=${data.results[0].id}>
                 <div class="card-header">
                     ${data.results[0].text}
                 </div>
             `
             $.each(data.results[0].answers, function(key, value){
-                template += `<div class="form-check">
+                template += `<div class="form-check" id="check-${value.id}">
                                 <input class="form-check-input" type="checkbox" value="${value.id}" id="ans-input">
                                 <label class="form-check-label" for="flexCheckDefault">${value.text}</label>
                             </div>
                         `
             })
-            template += `<a class="btn btn-primary" id="answer" href="${data.next}" role="button">Next</a>
-                </div>`    
+            
+            template += `<a class="btn btn-primary" id="answer" href="${data.next}" role="button">Ответить</a>
+                </div>`
+            
             return template
     };
 
-    /*
-    function loadMore() {
-    $('#answer').each((index, el)  => {
-        $(el).click((e) => {
+    
+   
+
+        $(document).on('click', '#answer', async function(e) {
             e.preventDefault()
-            var values = [];
-            $('[id="ans-input"]:checked').each(function(){
-            values.push($(this).val());
-            });     
-            alert(values.join(', '));
             
-            let pageUrl = $(el).attr('href')
-            $.ajax({
-                url: pageUrl, 
-                type: 'GET',
-                success: (data) => {
-                    $('.questions').append(renderCard(data))
-                }    
+            values = getCheckedOptions()
+            let data = { 
+                    'question_id': $('.card:last').attr('id'),
+                    'answers': values
+                }
 
-            })
+            let pageUrl = $(this).attr('href')
+            $(this).addClass('disabled')
+            await checkAnswer(data)
+            if(pageUrl != "null"){
+                axios.get(pageUrl).then( response => {
+                        $('input').attr('disabled', true);
+                        $('.questions').append(renderCard(response.data))
+                    }) 
+                } else  { 
+                    axios.get('/question/answer/').then( response => {
+                            $('.questions').append(showResult(response.data.score, response.data.count))
+                    })
+            }
         })
-    })
-    }
-    $(document).ready(function() {
-        loadMore()
-    })
 
-    $(document).ajaxStop(function() {
-        loadMore()
-    })
-    */
 
-     
-        $(document).on('click', '#answer', function(e) {
-            e.preventDefault()
-            var values = [];
+        function checkAnswer(data) {
+            return new Promise((resolve, reject) => {
+                axios.post('/question/answer/', data).then(response => {
+                    $.each(response.data.correct_answers, (key, value) => {
+                        $(`#check-${value}`).addClass(' correct')
+                    })
+                    $.each(response.data.uncorrect_answers, (key, value) => {
+                        $(`#check-${value}`).addClass(' uncorrect')
+                    })
+                    $.each(response.data.miss_answers, (key, value) => {
+                        $(`#check-${value}`).addClass(' miss')
+                    })
+                    resolve()
+                })
+            })
+        }
+
+        function getCheckedOptions() {
+            let values = [];
 
             $('[id="ans-input"]:checked:not(:disabled)').each(function(){
-                 values.push($(this).val()) 
-            })    
-
-            console.log(values)
-            
-            let pageUrl = $(this).attr('href')
-            $.ajax({
-                url: pageUrl, 
-                type: 'GET',
-                success: (data) => {
-                    $(this).addClass('disabled')
-                    $('input').attr('disabled', true); 
-                    $('.questions').append(renderCard(data))
-                    
-
-                }    
-
+                values.push($(this).val()) 
             })
-        })
-    
 
+            return values
+        }
 
+        function showResult(score, count) {
+            let percent = score / count * 100
+            console.log(percent)
+            let template = `<div class='text-center'>Количество правильных ответов ${score} из ${count} !</div>`
+            if (percent === 100) {
+                template += `<div class='text-center'>Отлично, вы полностью усвоили материал!</div>`
+                return template
+            }
+            if (percent >= 81) {
+                template += `<div class='text-center'>Очень хорошо, вы ответили почти на все вопросы! Для лучшего результата через некоторое время можете еще раз повторить тему.</div>`
+                return template
+            }
+
+            if (percent >= 61) {
+                template += `<div class='text-center'>Неплохо, но можно и лучше) через некоторое время повторите тему еще раз</div>` 
+                return template
+            }
+
+            if (percent >= 41) {
+                template += `<div class='text-center'>Вы кое что запомнили, но лучше повторите тему еще раз</div>` 
+                return template
+            }
+
+            if (percent < 41) {
+                 template +=`<div><img class='img-content-card' src='http://img0.reactor.cc/pics/post/%D0%9C%D0%B5%D0%BC%D1%8B-%D0%9F%D0%B0%D1%80%D1%82%D0%B8%D1%8F-%D0%B3%D0%BE%D1%80%D0%B4%D0%B8%D1%82%D1%8C%D1%81%D1%8F-%D1%82%D0%BE%D0%B1%D0%BE%D0%B9-%D0%92%D1%8B-%D1%80%D0%B0%D1%81%D1%81%D1%82%D1%80%D0%BE%D0%B8%D0%BB%D0%B8-%D0%BF%D0%B0%D1%80%D1%82%D0%B8%D1%8E-%D0%BD%D0%B0-%D1%81%D0%BB%D1%83%D1%87%D0%B0%D0%B9-%D0%B2%D0%B0%D0%B6%D0%BD%D1%8B%D1%85-%D0%BF%D0%B5%D1%80%D0%B5%D0%B3%D0%BE%D0%B2%D0%BE%D1%80%D0%BE%D0%B2-6568998.jpeg>'</div>
+                            <div class='text-center'>Вы ответили правильно  на слишком небольшое число вопросов. Пожалуйста снова изучите материалы темы</div>`
+                return template
+            } else {
+                return 'Произошла ошибка'
+            }
+        }
     </script>
 {% endblock%}
 

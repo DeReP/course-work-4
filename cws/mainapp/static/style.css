@@ -1,0 +1,47 @@
+.main-content {
+    margin-top: 55px;
+   }
+   
+   .card-text {
+        max-width: 700px;
+        padding: 20px 0;
+    }
+
+    .card-text span {
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .mx-width-1100 {
+        max-width: 1100px;
+    }        
+
+    .mx-width-500 {
+        max-width: 500px;
+    }
+
+    img.img-content-card {
+        display: block;
+        margin: 0 auto;
+        max-width: 100%;
+        height: auto !important;
+        object-fit: contain;
+        max-height: 100%;
+        width: auto;   
+    }
+
+    #main-banner {
+        background-image: url('/media/banner.png');
+        background-repeat: no-repeat;
+        background-size:cover;
+    }
+
+    .blog-footer {
+        display: flex;
+        flex: 0 0 auto;
+        margin-top: 1rem;
+        padding: 2.5rem 0;
+        color: #999;
+        text-align: center;
+        background-color: #f9f9f9;
+        border-top: .05rem solid #e5e5e5;
+    }

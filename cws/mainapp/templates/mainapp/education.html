@@ -25,50 +25,39 @@
                                 
                             </div>
                             {%if object_list.has_next %}
-                                <a class="btn btn-primary" id="next-btn" href="{{ request.path}}?page={{object_list.next_page_number}}" role="button">Next</a>
+                                <a class="btn btn-primary" id="next-btn" href="{{ request.path}}?page={{object_list.next_page_number}}" role="button">Далее</a>
                             {%else %}
                                 <a class="btn btn-primary" href="/" role="button">На главную</a>
+                                {% if topic_id != 3 %}
+                                    <a class="btn btn-primary" href="/test/{{topic_id}}" role="button">Перейти к тесту</a>
+                                {%endif%}
                             {% endif%}
                     </div>
                     {% endfor%} 
-                
-                
             </div>
             
+            </div>
                 
             
         </div>
     </main>
     
     <script>
-        function ajaxPagination() {
-            $('#pagination a.page-link, #next-btn').each((index, el)  => {
-                $(el).click((e) => {
+       
+        
+            $(document).on('click', '#pagination a.page-link, #next-btn', function(e) {
                     e.preventDefault()
-                    let pageUrl = $(el).attr('href')
-                    $.ajax({
-                        url: pageUrl, 
-                        type: 'GET',
-                        success: (data) => {
-                            $('#pagination').empty()
-                            $('#pagination').append($(data).find('#pagination').html())
-                            $('#mycontent').empty()
-                            $('#mycontent').append($(data).find('#mycontent').html())
-                        }    
-
-                    })
-                })
+                    let pageUrl = $(this).attr('href')
+                    axios.get(pageUrl).then(response => {
+                        $('#pagination').empty()
+                        $('#pagination').append($(response.data).find('#pagination').html())
+                        $('#mycontent').empty()
+                        $('#mycontent').append($(response.data).find('#mycontent').html())
+                        $('html, body').animate({scrollTop: 0},500)
+                    }) 
             })
-        }
+           
 
-            $(document).ready(function() {
-                ajaxPagination()
-            })
-
-            $(document).ajaxStop(function() {
-                ajaxPagination()
-            })
-            
     </script>
 {%endblock%}
 
